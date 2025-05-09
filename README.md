@@ -205,6 +205,14 @@ Explica brevemente cómo TCP implementa mecanismos de control de congestión, ha
 
 ### Pregunta 11: Funcionamiento de DNS
 Describe el proceso completo de resolución de nombres en el Sistema de Nombres de Dominio (DNS), desde que el usuario ingresa un dominio en el navegador hasta que se obtiene la dirección IP del servidor.
+1. El usuario introduce “ejemplo.com”.  
+2. El **resolver local** (stub) consulta al **servidor recursivo**.  
+3. Si no está en caché, el recursivo pregunta al **root** → derivación al TLD “.com”.  
+4. Se consulta al **servidor autoritativo** de “ejemplo.com”.  
+5. Devuelve la **dirección IP**, que asciende al stub y al navegador.  
+6. **Caché** intermedias aceleran futuras consultas.
+
+---
 
 ### Pregunta 12: Protocolos de Correo Electrónico
 Compara las características de los protocolos POP3, IMAP y SMTP en términos de:  
@@ -214,27 +222,66 @@ Compara las características de los protocolos POP3, IMAP y SMTP en términos de
 
 Incluye ejemplos de situaciones en las que cada uno sea más adecuado.
 
+| Protocolo | Función principal                     | Acceso                    | Almacenamiento            | Uso típico                         |
+|-----------|---------------------------------------|---------------------------|---------------------------|-------------------------------------|
+| **SMTP**  | Envío de correo (cliente → servidor)  | Puertos 25, 587           | No aplica                 | Servidores de salida                |
+| **POP3**  | Descarga y borrado del servidor       | Puerto 110                | Local (cliente)           | Usuarios con acceso puntual         |
+| **IMAP**  | Sincronización y acceso remoto        | Puerto 143                | Servidor                  | Múltiples dispositivos (móvil/PC)   |
+
+---
+
 ### Pregunta 13: Funcionamiento de HTTP y FTP
 **a)** Explica el funcionamiento básico de HTTP, mencionando los métodos más utilizados (GET, POST, PUT, DELETE).  
+- Modelo **petición-respuesta** sobre TCP.  
+- Métodos clave:  
+- **GET**: leer recurso  
+- **POST**: enviar datos al servidor  
+- **PUT**: reemplazar recurso  
+- **DELETE**: eliminar recurso
+  
 **b)** Describe el funcionamiento de FTP y señala las diferencias esenciales con HTTP, especialmente en el uso de conexiones (control y datos).
+- Usa **dos conexiones** TCP:  
+- **Control** (puerto 21): comandos  
+- **Datos** (puerto dinámico o 20): transferencia  
+- **Diferencias**: FTP mantiene canal separado para datos, HTTP usa la misma conexión (o multiplexa) para control y contenido.
+
+---
 
 ### Pregunta 14: Streaming y VoIP
 **a)** Define y compara brevemente los siguientes tipos de streaming:  
-- UDP Streaming  
-- HTTP Streaming  
-- Adaptive HTTP Streaming (DASH)  
-
-Menciona un ejemplo de aplicación para cada uno.  
+- **UDP Streaming**: RTP/UDP → baja latencia, usado en videoconferencias.  
+- **HTTP Streaming**: HTTP progresivo → descarga continua, usado en YouTube.  
+- **Adaptive HTTP Streaming (DASH)**: segmentos adaptativos según ancho de banda, usado en Netflix. 
+  
 **b)** Explica el proceso de funcionamiento de VoIP (Voz sobre IP) y enumera algunos problemas comunes (retardo, pérdida de paquetes, eco) junto con posibles soluciones.
+1. **Proceso**: muestreo → codificación (codec) → encapsulado en RTP/UDP → envío IP → decodificación y reproducción.  
+2. **Problemas**:  
+- Retardo → jitter buffer  
+- Pérdida de paquetes → FEC o retransmisión selectiva  
+- Eco → cancelación de eco en extremos
+
+---
 
 ### Pregunta 15: Control de Congestión en Redes Multimedia
 Describe dos técnicas utilizadas para evitar la congestión en aplicaciones multimedia (por ejemplo, uso de buffering en el cliente o marcado de paquetes – DiffServ) y explica cómo contribuyen a mejorar la calidad del servicio.
+1. **Buffering en cliente**  
+  - Acumula datos antes de reproducir → suaviza variaciones de llegada.  
+2. **Marcado de paquetes (DiffServ)**  
+  - Etiqueta paquetes según prioridad → routers aplican colas diferenciadas.
+
+---
 
 ### Pregunta 16: Best-Effort vs Servicios Multiclase
 Compara el modelo Best-Effort con los Servicios Multiclase, enfatizando:  
 - La manera en que se maneja el tráfico  
 - La garantía (o falta de ella) en la calidad de servicio  
 - Ejemplos de aplicaciones para cada enfoque
+
+| Característica           | Best-Effort                         | Multiclase / QoS                |
+|--------------------------|-------------------------------------|---------------------------------|
+| Trato al tráfico         | “Mejor esfuerzo”, sin garantías     | Colas y prioridades definidas   |
+| Garantía de servicio     | Ninguna                             | Garantías de retardo/ancho      |
+| Ejemplos                 | Navegación web, email               | VoIP, videoconferencia          |
 
 ---
 
@@ -247,20 +294,72 @@ Identifica y explica brevemente las siguientes áreas críticas de seguridad en 
 - No repudio  
 - Integridad
 
+| Ámbito           | Descripción                                      | Técnicas Mitigación         |
+|------------------|--------------------------------------------------|-----------------------------|
+| **Confidencialidad** | Evitar lectura no autorizada                  | Cifrado simétrico/asimétrico |
+| **Autenticación**    | Verificar identidad                            | MFA, certificados           |
+| **No repudio**       | Imposibilidad de negar una acción               | Firmas digitales            |
+| **Integridad**       | Garantizar datos sin alteraciones no detectadas | MAC, hashes criptográficos  |
+
+---
+
 ### Pregunta 18: Cifrado Simétrico vs Asimétrico
 Realiza una comparación entre cifrado simétrico y asimétrico, abordando:  
 - Número de claves requeridas  
 - Velocidad y eficiencia  
 - Ejemplos de algoritmos y aplicaciones típicas en cada caso
 
+| Aspecto             | Simétrico                       | Asimétrico                   |
+|---------------------|---------------------------------|------------------------------|
+| Claves              | Una sola clave                  | Par (pública/privada)        |
+| Velocidad           | Muy rápido                      | Más lento                    |
+| Ejemplos            | AES, 3DES                       | RSA, ECC                     |
+| Uso típico          | Cifrado de datos en tránsito    | Intercambio de claves, firma |
+
+---
+
 ### Pregunta 19: Funcionamiento del Algoritmo RSA
 **a)** Describe el proceso de generación de claves en RSA (selección de primos, cálculo de _n_ y _ϕ(n)_, determinación de _e_ y _d_).  
+1. Elegir primos grandes p, q.  
+2. Calcular n = p·q.  
+3. Calcular φ(n) = (p–1)(q–1).  
+4. Elegir e tal que 1 < e < φ(n) y gcd(e, φ(n))=1.  
+5. Calcular d ≡ e^–1 mod φ(n).
+   
 **b)** Realiza un ejemplo numérico sencillo (por ejemplo, _p_ = 3, _q_ = 11, _e_ = 7) para demostrar el cifrado y descifrado de un mensaje (_M_ = 4).
+- p=3, q=11 → n=33, φ=20  
+- Elegimos e=7 (coprimo con 20)  
+- d: 7·d ≡1 mod20 → d=3  
+- Mensaje M=4  
+- **Cifrado**: C = 4^7 mod33 = 16  
+- **Descifrado**: M = 16^3 mod33 = 4  
+
+---
 
 ### Pregunta 20: Firewalls, VPN e IPSec
 **a)** Explica el funcionamiento de un firewall, mencionando al menos dos tipos (filtrado de paquetes y firewall de estado) y su importancia.  
+- **Filtrado de paquetes**: inspecciona cabeceras IP/puerto.  
+- **Firewall de estado**: además rastrea sesiones TCP.  
+- **Importancia**: primera línea de defensa, bloquea tráfico no deseado.
+  
 **b)** Compara VPN e IPSec en términos de propósito, modo de operación y ejemplos de uso.
+
+| Aspecto         | VPN (SSL/TLS)              | IPSec                            |
+|-----------------|----------------------------|----------------------------------|
+| Propósito       | Acceso remoto seguro       | Túneles site-to-site o host-to-host |
+| Modo            | Basado en TLS sobre TCP    | AH/ESP sobre IP, transport/túnel |
+| Ejemplo         | Cliente teletrabajo        | Conexión entre sedes corporativas |
+
+---
 
 ### Pregunta 21: SSL/TLS y DNS Spoofing
 **a)** Describe brevemente el funcionamiento del protocolo SSL/TLS y su importancia para la seguridad en la web (HTTPS).  
+1. Negociación de versión y cifras.  
+2. Intercambio de certificados X.509.  
+3. Generación de secreto compartido.  
+4. Cifrado simétrico de la sesión.  
+> Asegura conf., integridad y autenticación en HTTPS.
+
 **b)** Explica qué es el DNS Spoofing y cómo DNSSEC ayuda a proteger la integridad de las respuestas DNS.
+- **Definición**: inserción de respuestas DNS falsas → redirige tráfico.  
+- **DNSSEC**: firma digital de registros DNS, permite al resolver verificar la integridad y autenticidad de las respuestas.
