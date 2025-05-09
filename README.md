@@ -1,4 +1,4 @@
-# Simulacro_Examen_Parcial_2
+# Simulacro Examen Parcial 2
 
 # Examen de Redes
 
@@ -37,25 +37,82 @@
 
 ### Pregunta 1: Cálculo de Ruta Más Corta
 **a)** Explica brevemente el funcionamiento del Algoritmo de Dijkstra para encontrar la ruta más corta entre dos nodos en un grafo ponderado.  
+1. **Inicialización**: A cada nodo se le asigna una distancia inicial ∞, salvo el nodo origen que recibe 0.  
+2. **Selección**: Se elige el nodo no visitado con la distancia mínima.  
+3. **Relajación**: Para cada vecino del nodo seleccionado, se comprueba si la distancia al origen puede mejorar pasando por el nodo actual; en caso afirmativo, se actualiza.  
+4. **Marcaje**: El nodo seleccionado pasa a visitado y no se vuelve a considerar.  
+5. **Repetición**: Se repiten pasos 2–4 hasta visitar todos los nodos o alcanzar el destino.  
+
+> **Complejidad**: O((V+E)·log V) con montículos binarios (V = nodos, E = aristas).
+
 **b)** Describe el método de Enrutamiento por Inundación (Flooding) y discute sus ventajas y desventajas comparándolo con Dijkstra.
+- **Mecanismo**: Cada paquete recibido se reenvía a **todos** los vecinos excepto aquel por el que llegó. Se suelen usar contadores de saltos (TTL) o caché de paquetes para evitar bucles.  
+- **Ventajas**:  
+  - No requiere tablas de enrutamiento ni información global.  
+  - Si existe al menos un camino, lo encontrará.  
+- **Desventajas**:  
+  - **Sobrecarga**: Gran cantidad de duplicados inundan la red.  
+  - **Ineficiente**: Usa ancho de banda innecesario.  
+  - **No óptimo**: No garantiza la ruta más corta ni evalúa costes.
+    
+---
 
 ### Pregunta 2: Cálculo de Direcciones de Broadcast y Subredes
 **a)** Para la subred `172.29.152.0` con máscara `255.255.248.0`, determina la dirección de broadcast. Explica el proceso de conversión de la máscara a binario y cómo se obtiene el resultado.  
+1. **Máscara en binario**:
+   255.255.248.0 → 11111111.11111111.11111000.00000000
+2. **Bits de host**: 32 – 21 = 11 bits.  
+3. **Broadcast**: Al poner todos los bits de host a 1:
+   172.29. (152 → 10011000) | host=11111111.111 → 159.255 → 172.29.159.255
+   
 **b)** Dado el bloque `172.18.26.0/23`, calcula la dirección de broadcast y justifica el proceso.
+1. **Máscara**:  255.255.252.0 → 11111111.11111111.11111100.00000000
+2. **Bloque de 4 en tercer octeto** (bits de red: 22): 252 = 11111100 → múltiplos de 4.  
+3. **Red**: tercer octeto de 53 → 52 (último múltiplo de 4 ≤ 53) → 172.22.52.0  
+4. **Broadcast**: suma 3 al tercer octeto y pone host=255 → 172.22.55.255  
+5. **Rango de hosts**:  
+- Primera: 172.22.52.1  
+- Última: 172.22.55.254
+
+---
 
 ### Pregunta 3: Última Dirección Válida y Rango de Hosts
 **a)** Con la subred `172.30.67.192` y máscara `255.255.255.192`, determina cuál es la última dirección de host válida (excluyendo la dirección de broadcast).  
+- Tamaño: 2^(32–26)=2^6=64 direcciones (hosts+red+broadcast).  
+- Rango de la subred: 172.30.67.192–172.30.67.255  
+- **Broadcast**: 172.30.67.255  
+- **Última host válida**: 172.30.67.254  
+
 **b)** Para el host `172.22.53.199` con máscara `255.255.252.0`, determina el rango de direcciones válidas (primera y última dirección de host) de la subred.
+1. **Máscara**:  
+255.255.252.0 → 11111111.11111111.11111100.00000000
+2. **Bloque de 4 en tercer octeto** (bits de red: 22): 252 = 11111100 → múltiplos de 4.  
+3. **Red**: tercer octeto de 53 → 52 (último múltiplo de 4 ≤ 53) → 172.22.52.0  
+4. **Broadcast**: suma 3 al tercer octeto y pone host=255 → 172.22.55.255  
+5. **Rango de hosts**:  
+- Primera: 172.22.52.1  
+- Última: 172.22.55.254  
+
+---
 
 ### Pregunta 4: Capacidad y Segmentación de Subredes
 **a)** Calcula el número de equipos (hosts) que pueden conectarse en la red `172.26.0.0` con máscara `255.255.255.192`.  
+- Hosts = 2^(32–26) – 2 = 64 – 2 = **62 equipos**.
+  
 **b)** Dado el host `172.18.171.190/23`, identifica a qué subred pertenece, explicando cómo se determina el bloque correspondiente.
+1. /23 → bloques de 2 en el tercer octeto.  
+2. 171 → múltiplo de 2 más cercano ≤ 171 = 170.  
+3. **Subred**: 172.18.170.0/23.
+
+---
 
 ### Pregunta 5: Número de Subredes Necesarias
 Explica cómo se determina el número de subredes disponibles utilizando la fórmula:  
 Nº de subredes = 2^s
 donde _s_ es el número de bits prestados al identificador de subred. Aplica este concepto a un escenario en el que se requieren al menos 4 subredes para segmentar una red.
-
+- Para ≥ 4 subredes: 2^s ≥ 4 → s ≥ 2.
+- **Ejemplo**: partimos de /24, pedimos s=2 → /26 → obtenemos 4 subredes de 64 direcciones cada una.
+  
 ---
 
 ## Parte II: Capa de Transporte
@@ -65,8 +122,20 @@ donde _s_ es el número de bits prestados al identificador de subred. Aplica est
 - Necesidad de establecer conexión  
 - Fiabilidad y control de errores  
 - Control de flujo y congestión  
-- Velocidad de transmisión  
+- Velocidad de transmisión
+  
+| Característica                  | TCP                                  | UDP                         |
+|---------------------------------|--------------------------------------|-----------------------------|
+| **Conexión**                    | Orientado a conexión (handshake)     | Sin conexión                |
+| **Fiabilidad**                  | Sí (retransmisiones, ACKs, secuencias) | No (mejor esfuerzo)         |
+| **Control de flujo/congestión** | Ventana deslizante, Slow Start, AIMD | No integra                   |
+| **Velocidad**                   | Menor (mayor sobrecarga)             | Mayor (menor overhead)      |
+
 **b)** Menciona dos ejemplos de aplicaciones en las que se prefiera usar UDP y justifica la elección.
+1. **VoIP** (p. ej. SIP/RTP): baja latencia, tolera pérdidas.  
+2. **Streaming en vivo** (p. ej. IPTV): prefiere continuidad sobre retransmisión.
+
+---
 
 ### Pregunta 7: Establecimiento y Terminación de Conexión en TCP
 Describe en detalle el proceso de establecimiento de conexión en TCP (Three-Way Handshake) y el proceso de terminación de la conexión (Four-Way Handshake). Explica la importancia de cada uno de los pasos involucrados.
