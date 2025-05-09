@@ -1,5 +1,7 @@
 # Simulacro Examen Parcial 2 Redes
 
+https://github.com/maridilo/Simulacro_Examen_Parcial_2.git
+
 ## Índice
 - [Parte I: Capa de Red](#parte-i-capa-de-red)  
   - [Pregunta 1: Cálculo de Ruta Más Corta](#pregunta-1-cálculo-de-ruta-más-corta)  
