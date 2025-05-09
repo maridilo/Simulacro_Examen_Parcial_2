@@ -139,9 +139,33 @@ donde _s_ es el número de bits prestados al identificador de subred. Aplica est
 
 ### Pregunta 7: Establecimiento y Terminación de Conexión en TCP
 Describe en detalle el proceso de establecimiento de conexión en TCP (Three-Way Handshake) y el proceso de terminación de la conexión (Four-Way Handshake). Explica la importancia de cada uno de los pasos involucrados.
+1. **Three-Way Handshake**  
+ 1. Cliente → Servidor: **SYN**, seq=x  
+ 2. Servidor → Cliente: **SYN-ACK**, seq=y, ack=x+1  
+ 3. Cliente → Servidor: **ACK**, ack=y+1  
+ > Garantiza que ambos conocen el número de secuencia inicial y que el canal está operativo.
+
+2. **Four-Way Handshake (cierre)**  
+ 1. Iniciador → Otro: **FIN**, seq=u  
+ 2. Otro → Iniciador: **ACK**, ack=u+1  
+ 3. Otro → Iniciador: **FIN**, seq=v  
+ 4. Iniciador → Otro: **ACK**, ack=v+1  
+ > Asegura cierre ordenado y entrega de datos pendientes.
+
+---
 
 ### Pregunta 8: Multiplexación y Demultiplexación
 Explica el concepto de multiplexación descendente y multiplexación ascendente en la capa de transporte, y proporciona un ejemplo práctico para cada caso.
+
+- **Multiplexación (descendente)**  
+- Múltiples _streams_ de aplicación se encapsulan en segmentos TCP/UDP usando diferentes **puertos fuente**.  
+- **Ejemplo**: un navegador abre conexiones simultáneas a varios servidores web; localmente usa puertos 49152, 49153, ….
+
+- **Demultiplexación (ascendente)**  
+- El receptor lee cada segmento y lo entrega a la aplicación correcta según **(IP destino, puerto destino)**.  
+- **Ejemplo**: servidor web en puerto 80 distingue peticiones HTTP de clientes distintos por el par (IP_cliente, puerto_origen).
+
+---
 
 ### Pregunta 9: Cálculo del Tamaño de Ventana en TCP
 Se tiene un enlace con los siguientes parámetros:
@@ -151,19 +175,29 @@ Se tiene un enlace con los siguientes parámetros:
 - MSS (Tamaño máximo de segmento) = 1 500 bytes  
 
 Realiza lo siguiente:  
-1. Convierte las unidades necesarias (RTT a segundos y ancho de banda a bps).  
-2. Calcula el tamaño óptimo de la ventana en bits y en bytes con la fórmula:  
-Ventana_óptima = Ancho de banda × RTT
-3. Determina aproximadamente el número de segmentos MSS que pueden estar en tránsito simultáneamente.  
-4. Muestra todos los pasos de tu cálculo.
+-  Convierte las unidades necesarias (RTT a segundos y ancho de banda a bps).
+   - RTT = 50 ms = 0,05 s  
+   - BW = 100 Mbps = 100·10⁶ bps  
+-  Calcula el tamaño óptimo de la ventana en bits y en bytes con la fórmula: Ventana_óptima = Ancho de banda × RTT
+    - W = BW × RTT = 100·10⁶ bps × 0,05 s = 5·10⁶ bits = 5 000 000 bits ÷ 8 = 625 000 bytes
+-  Determina aproximadamente el número de segmentos MSS que pueden estar en tránsito simultáneamente.
+   N = 625 000 bytes ÷ 1 500 bytes ≈ 416,7 → ≈ 417 segmentos
+   
+Muestra todos los pasos de tu cálculo.
+
+---
 
 ### Pregunta 10: Control de Congestión en TCP
 Explica brevemente cómo TCP implementa mecanismos de control de congestión, haciendo énfasis en:  
-- El Algoritmo de Arranque Lento (Slow Start)  
-- El Algoritmo de Nagle  
-- El Algoritmo de Clark  
-
-Para cada uno, menciona su objetivo y cómo contribuye a optimizar el rendimiento de la red.
+- El Algoritmo de Arranque Lento (Slow Start)
+  - Objetivo: descubrir capacidad disponible.  
+  - Estrategia: cwnd inicia en 1 MSS y se duplica cada RTT hasta un umbral (ssthresh).
+- El Algoritmo de Nagle
+  - Objetivo: reducir número de segmentos pequeños.  
+  - Estrategia: cuando hay datos sin ACK pendientes, agrupa y espera antes de enviar nuevos fragmentos.
+- El Algoritmo de Clark
+  - Objetivo: detección rápida de pérdidas y ajuste del envío.  
+  - Estrategia: tras 3 ACK duplicados, retransmite inmediatamente el segmento perdido (fast retransmit) y aplica AIMD (reduce cwnd a la mitad).
 
 ---
 
