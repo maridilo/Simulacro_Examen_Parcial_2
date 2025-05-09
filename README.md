@@ -1,6 +1,4 @@
-# Simulacro Examen Parcial 2
-
-# Examen de Redes
+# Simulacro Examen Parcial 2 Redes
 
 ## Índice
 - [Parte I: Capa de Red](#parte-i-capa-de-red)  
@@ -37,11 +35,11 @@
 
 ### Pregunta 1: Cálculo de Ruta Más Corta
 **a)** Explica brevemente el funcionamiento del Algoritmo de Dijkstra para encontrar la ruta más corta entre dos nodos en un grafo ponderado.  
-1. **Inicialización**: A cada nodo se le asigna una distancia inicial ∞, salvo el nodo origen que recibe 0.  
-2. **Selección**: Se elige el nodo no visitado con la distancia mínima.  
-3. **Relajación**: Para cada vecino del nodo seleccionado, se comprueba si la distancia al origen puede mejorar pasando por el nodo actual; en caso afirmativo, se actualiza.  
-4. **Marcaje**: El nodo seleccionado pasa a visitado y no se vuelve a considerar.  
-5. **Repetición**: Se repiten pasos 2–4 hasta visitar todos los nodos o alcanzar el destino.  
+    1. **Inicialización**: A cada nodo se le asigna una distancia inicial ∞, salvo el nodo origen que recibe 0.  
+    2. **Selección**: Se elige el nodo no visitado con la distancia mínima.  
+    3. **Relajación**: Para cada vecino del nodo seleccionado, se comprueba si la distancia al origen puede mejorar pasando por el nodo actual; en caso afirmativo, se actualiza.  
+    4. **Marcaje**: El nodo seleccionado pasa a visitado y no se vuelve a considerar.  
+    5. **Repetición**: Se repiten pasos 2–4 hasta visitar todos los nodos o alcanzar el destino.  
 
 > **Complejidad**: O((V+E)·log V) con montículos binarios (V = nodos, E = aristas).
 
